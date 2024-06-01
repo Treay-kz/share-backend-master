@@ -22,7 +22,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/my_db?serverTimezone=Asia/Shanghai
     username: root
-    password: hjk1679924491
+    password: xxxxx
 
   # Redis 配置
   redis:
@@ -37,8 +37,8 @@ spring:
   mail:
     host: smtp.qq.com
     protocol: smtp
-    username: 1679924491@qq.com
-    password: hlwbkpdbctoyejcg
+    username: xxxxx@qq.com
+    password: xxxxxxx
     port: 587
     default-encoding: UTF-8
 
