@@ -15,7 +15,6 @@ create table if not exists user
     userAccount  varchar(256)                           not null comment '账号',
     userPassword varchar(512)                           not null comment '密码',
     codingId     varchar(256)                           null comment '内部编号（学号）',
-    tags         varchar(1024)                          null comment '标签列表JSON',
     userName     varchar(256)                           null comment '用户昵称',
     userAvatar   varchar(1024)                          null comment '用户头像',
     userProfile  varchar(512)                           null comment '用户简介',

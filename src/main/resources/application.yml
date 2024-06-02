@@ -20,13 +20,13 @@ spring:
   # 数据库配置
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/my_db?serverTimezone=Asia/Shanghai
+    url: jdbc:mysql://localhost:3306/share_db?serverTimezone=Asia/Shanghai
     username: root
     password: hjk1679924491
 
   # Redis 配置
   redis:
-    database: 11
+    database: 12
     host: localhost
     port: 6379
     timeout: 5000
@@ -123,4 +123,4 @@ knife4j:
       default:
         api-rule: package
         api-rule-resources:
-          - com.treay.springbootinit.controller
+          - com.treay.shareswing.controller
