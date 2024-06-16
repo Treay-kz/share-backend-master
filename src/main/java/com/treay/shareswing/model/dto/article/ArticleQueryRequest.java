@@ -1,10 +1,14 @@
 package com.treay.shareswing.model.dto.article;
 
+
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.treay.shareswing.common.PageRequest;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -23,34 +27,46 @@ public class ArticleQueryRequest extends PageRequest implements Serializable {
     private Long id;
 
     /**
-     * id
-     */
-    private Long notId;
-
-    /**
-     * 搜索词
+     * 搜索关键字
      */
     private String searchText;
 
     /**
-     * 标题
+     * 标签列表（json 数组）
      */
-    private String title;
+    private String tags;
+    /**
+     * 文章状态: 0-待审核 1-审核未通过 2-已发布
+     */
+    private Integer articleStatus;
 
     /**
-     * 内容
+     * 点赞数
      */
-    private String content;
+    private Integer thumbNum;
 
     /**
-     * 标签列表
+     * 收藏数
      */
-    private List<String> tags;
+    private Integer favourNum;
+
 
     /**
      * 创建用户 id
      */
     private Long userId;
+
+    /**
+     * 创建时间
+     */
+    private Date createTime;
+
+    /**
+     * 更新时间
+     */
+    private Date updateTime;
+
+
 
     private static final long serialVersionUID = 1L;
 }
