@@ -1,8 +1,11 @@
 package com.treay.shareswing.model.dto.article;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -13,6 +16,7 @@ import java.util.List;
  */
 @Data
 public class ArticleAddRequest implements Serializable {
+
 
     /**
      * 标题
@@ -25,9 +29,10 @@ public class ArticleAddRequest implements Serializable {
     private String content;
 
     /**
-     * 标签列表
+     * 标签列表（json 数组）
      */
-    private List<String> tags;
+    private String tags;
+
 
     private static final long serialVersionUID = 1L;
 }

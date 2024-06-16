@@ -2,6 +2,7 @@ package com.treay.shareswing.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+
 import com.treay.shareswing.common.BaseResponse;
 import com.treay.shareswing.common.ErrorCode;
 import com.treay.shareswing.common.ResultUtils;
@@ -202,7 +203,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         // 记录用户登录态
         request.getSession().setAttribute(USER_LOGIN_STATE, user);
         return this.getLoginUserVO(user);
-
     }
         public Boolean initUser (User user){
             String defaultUrl = "https://img1.baidu.com/it/u=1637179393,2329776654&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=542";
@@ -220,6 +220,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
             BeanUtils.copyProperties(user, loginUserVO);
             return loginUserVO;
         }
+
+    @Override
+    public User getLoginUser(HttpServletRequest request) {
+        if (request.getSession().getAttribute(USER_LOGIN_STATE) == null) {
+            return null;
+        }
+        return (User) request.getSession().getAttribute(USER_LOGIN_STATE);
+    }
 }
 
 
