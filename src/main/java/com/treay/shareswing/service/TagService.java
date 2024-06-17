@@ -10,4 +10,10 @@ import com.treay.shareswing.model.entity.Tag;
 */
 public interface TagService extends IService<Tag> {
 
+    String addTag(Tag tag);
+    Tag searchTag(Integer id);
+
+    String deleteTag(Integer tagid);
+
+    Integer changeTag(Tag tag);
 }
