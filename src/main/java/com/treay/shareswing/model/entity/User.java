@@ -34,10 +34,6 @@ public class User implements Serializable {
      */
     private String codingId;
 
-    /**
-     * 标签列表JSON
-     */
-    private String tags;
 
     /**
      * 用户昵称

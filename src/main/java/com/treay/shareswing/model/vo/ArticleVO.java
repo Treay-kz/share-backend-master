@@ -34,9 +34,28 @@ public class ArticleVO implements Serializable {
     private String content;
 
     /**
+     * 标题
+     */
+    private Boolean hasThumb;
+
+    /**
+     * 内容
+     */
+    private Boolean hasFavour;
+
+    /**
      * 创建用户 id
      */
     private Long userId;
+    /**
+     * 点赞数
+     */
+    private Integer thumbNum;
+
+    /**
+     * 收藏数
+     */
+    private Integer favourNum;
 
     /**
      * 创建时间
@@ -87,7 +106,6 @@ public class ArticleVO implements Serializable {
         }
         ArticleVO articleVO = new ArticleVO();
         BeanUtils.copyProperties(article, articleVO);
-        articleVO.setTagList(JSONUtil.toList(article.getTags(), String.class));
         return articleVO;
     }
 }

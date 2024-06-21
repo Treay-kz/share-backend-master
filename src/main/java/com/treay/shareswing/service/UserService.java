@@ -4,8 +4,11 @@ import co.elastic.clients.elasticsearch.nodes.Http;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.treay.shareswing.common.BaseResponse;
 import com.treay.shareswing.model.dto.user.UserSendEmail;
+import com.treay.shareswing.model.entity.Article;
 import com.treay.shareswing.model.entity.User;
+import com.treay.shareswing.model.vo.ArticleVO;
 import com.treay.shareswing.model.vo.LoginUserVO;
+import com.treay.shareswing.model.vo.UserVO;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -59,4 +62,21 @@ public interface UserService extends IService<User> {
      * @return
      */
     User getLoginUser(HttpServletRequest request);
+
+
+    /**
+     * 根据id查询用户 返回封装类（VO）
+     * @param user
+     * @param request
+     * @return
+     */
+    UserVO getUserVO(User user, HttpServletRequest request);
+
+    /**
+     * 判断是否为管理员
+     * @param request
+     * @return
+     */
+    boolean isAdmin(HttpServletRequest request);
+
 }
