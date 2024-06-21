@@ -12,6 +12,7 @@ import com.treay.shareswing.model.dto.user.UserSendEmail;
 import com.treay.shareswing.model.entity.User;
 import com.treay.shareswing.model.enums.UserRoleEnum;
 import com.treay.shareswing.model.vo.LoginUserVO;
+import com.treay.shareswing.model.vo.UserVO;
 import com.treay.shareswing.service.UserService;
 import javax.mail.*;
 import com.treay.shareswing.utils.EmailUtils;
@@ -220,13 +221,32 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
             BeanUtils.copyProperties(user, loginUserVO);
             return loginUserVO;
         }
-
+    /**
+     * 获取用户封装
+     *
+     * @param user
+     * @param request
+     * @return
+     */
+    @Override
+    public UserVO getUserVO(User user, HttpServletRequest request) {
+        // 对象转封装类
+        UserVO userVO = UserVO.objToVo(user);
+        return userVO;
+    }
     @Override
     public User getLoginUser(HttpServletRequest request) {
         if (request.getSession().getAttribute(USER_LOGIN_STATE) == null) {
             return null;
         }
         return (User) request.getSession().getAttribute(USER_LOGIN_STATE);
+    }
+
+    @Override
+    public boolean isAdmin(HttpServletRequest request) {
+        User user = this.getLoginUser(request);
+        UserRoleEnum mustRoleEnum = UserRoleEnum.getEnumByValue(user.getUserRole());
+        return mustRoleEnum.equals(UserRoleEnum.ADMIN);
     }
 }
 

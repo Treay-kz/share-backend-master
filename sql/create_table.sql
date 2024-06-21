@@ -28,14 +28,14 @@ create table if not exists user
 ) comment '用户' collate = utf8mb4_unicode_ci;
 
 -- 文件表
-create table if not exists notice
+create table if not exists file
 (
     id              bigint auto_increment comment '主键'
         primary key,
     userId          bigint                             null comment '上传人id',
-    fileUrl         bigint                             null comment '文件路径',
-    fileType        bigint                             null comment '文件类型（word、ppt、pdf、txt）',
-    fileSize    	bigint 							   null comment '文件大小',
+    fileUrl         varchar(256)                       null comment '文件路径',
+    fileType        varchar(32)                        null comment '文件类型（word、ppt、pdf、txt）',
+    fileSize    	int 							   null comment '文件大小',
     fileStatus		int                            not null comment '文件状态:0-待审核 1-审核未通过 2-已发布',
     createTime      datetime default CURRENT_TIMESTAMP null comment '创建时间',
     updateTime      datetime default CURRENT_TIMESTAMP null on update CURRENT_TIMESTAMP comment '修改时间',
@@ -80,7 +80,7 @@ create table if not exists article_thumb
 (
     id         bigint auto_increment comment 'id' primary key,
     articleId  bigint                             not null comment '文章 id',
-    userId     bigint                             not null comment '创建用户 id',
+    userId     bigint                             not null comment '点赞人 id',
     createTime datetime default CURRENT_TIMESTAMP not null comment '创建时间',
     updateTime datetime default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间'
 ) comment '文章点赞';
@@ -91,7 +91,7 @@ create table if not exists article_favour
 (
     id         bigint auto_increment comment 'id' primary key,
     articleId  bigint                             not null comment '文章 id',
-    userId     bigint                             not null comment '创建用户 id',
+    userId     bigint                             not null comment '收藏人 id',
     createTime datetime default CURRENT_TIMESTAMP not null comment '创建时间',
     updateTime datetime default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间'
 

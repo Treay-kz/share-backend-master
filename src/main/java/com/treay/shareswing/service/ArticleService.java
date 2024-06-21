@@ -1,11 +1,14 @@
 package com.treay.shareswing.service;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.treay.shareswing.model.dto.admin.ArticleReviewRequest;
 import com.treay.shareswing.model.dto.article.ArticleQueryRequest;
 import com.treay.shareswing.model.entity.Article;
 import com.treay.shareswing.model.vo.ArticleVO;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 
@@ -21,7 +24,7 @@ public interface ArticleService extends IService<Article> {
      * @param articleQueryRequest
      * @return
      */
-    Wrapper<Article> queryArticles(ArticleQueryRequest articleQueryRequest);
+    QueryWrapper<Article> queryArticles(ArticleQueryRequest articleQueryRequest);
 
     /**
      * 参数校验
@@ -29,4 +32,27 @@ public interface ArticleService extends IService<Article> {
      * @param b
      */
     void validArticle(Article article, boolean b);
+
+    /**
+     * 根据id查询文章 返回封装类（VO）
+     * @param article
+     * @param request
+     * @return
+     */
+    ArticleVO getArticleVO(Article article, HttpServletRequest request);
+
+    /**
+     * 删除文章
+     * @param id
+     * @return
+     */
+    boolean deleteArticle(long id);
+
+    /**
+     * 审核文章
+     * @param articleReviewRequest
+     * @return
+     */
+    boolean reviewArticle(ArticleReviewRequest articleReviewRequest,HttpServletRequest request);
+
 }
