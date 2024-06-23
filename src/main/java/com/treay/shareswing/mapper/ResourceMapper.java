@@ -1,7 +1,7 @@
 package com.treay.shareswing.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.treay.shareswing.model.entity.Notice;
+import com.treay.shareswing.model.entity.Resource;
 
 
 /**
@@ -10,7 +10,7 @@ import com.treay.shareswing.model.entity.Notice;
 * @createDate 2024-06-01 11:50:40
 * @Entity generator.domain.Notice
 */
-public interface NoticeMapper extends BaseMapper<Notice> {
+public interface ResourceMapper extends BaseMapper<Resource> {
 
 }
 

@@ -10,9 +10,9 @@ import java.util.Date;
  * 文件表
  * @TableName notice
  */
-@TableName(value ="notice")
+@TableName(value ="resource")
 @Data
-public class Notice implements Serializable {
+public class Resource implements Serializable {
     /**
      * 主键
      */
@@ -27,12 +27,12 @@ public class Notice implements Serializable {
     /**
      * 文件路径
      */
-    private Long fileUrl;
+    private String fileUrl;
 
     /**
      * 文件类型（word、ppt、pdf、txt）
      */
-    private Long fileType;
+    private String fileType;
 
     /**
      * 文件大小
