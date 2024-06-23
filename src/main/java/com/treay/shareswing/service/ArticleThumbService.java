@@ -1,7 +1,10 @@
 package com.treay.shareswing.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.treay.shareswing.model.entity.Article;
 import com.treay.shareswing.model.entity.ArticleThumb;
+
+import java.util.List;
 
 
 /**
@@ -11,4 +14,7 @@ import com.treay.shareswing.model.entity.ArticleThumb;
 */
 public interface ArticleThumbService extends IService<ArticleThumb> {
 
+    ArticleThumb change(Long articleId,Long userid);
+
+    List<Article> findByUserId(Long userId);
 }

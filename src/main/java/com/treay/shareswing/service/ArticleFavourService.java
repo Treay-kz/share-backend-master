@@ -1,7 +1,10 @@
 package com.treay.shareswing.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.treay.shareswing.model.entity.Article;
 import com.treay.shareswing.model.entity.ArticleFavour;
+
+import java.util.List;
 
 
 /**
@@ -10,5 +13,7 @@ import com.treay.shareswing.model.entity.ArticleFavour;
 * @createDate 2024-06-01 11:50:40
 */
 public interface ArticleFavourService extends IService<ArticleFavour> {
+    List<Article> findByUserId(Long userid);
+    ArticleFavour change(Long articleId, Long userid);
 
 }
