@@ -9,6 +9,7 @@ import com.treay.shareswing.common.ResultUtils;
 import com.treay.shareswing.constant.UserConstant;
 import com.treay.shareswing.exception.BusinessException;
 import com.treay.shareswing.exception.ThrowUtils;
+import com.treay.shareswing.model.dto.admin.ArticleReviewRequest;
 import com.treay.shareswing.model.dto.article.ArticleAddRequest;
 import com.treay.shareswing.model.dto.article.ArticleEditRequest;
 import com.treay.shareswing.model.dto.article.ArticleQueryRequest;
@@ -63,7 +64,10 @@ public class ArticleController {
         articleService.validArticle(article, true);
 
         User loginUser = userService.getLoginUser(request);
+        // 初始化
         article.setUserId(loginUser.getId());
+        article.setFavourNum(0);
+        article.setThumbNum(0);
 
         // 写入数据库
         boolean result = articleService.save(article);
@@ -73,114 +77,122 @@ public class ArticleController {
         return ResultUtils.success(newArticleId);
     }
 
-//    /**
-//     * 删除文章
-//     *
-//     * @param deleteRequest
-//     * @param request
-//     * @return
-//     */
-//    @PostMapping("/delete")
-//    public BaseResponse<Boolean> deleteArticle(@RequestBody DeleteRequest deleteRequest, HttpServletRequest request) {
-//        if (deleteRequest == null || deleteRequest.getId() <= 0) {
-//            throw new BusinessException(ErrorCode.PARAMS_ERROR);
-//        }
-//        User user = userService.getLoginUser(request);
-//        long id = deleteRequest.getId();
-//        // 判断是否存在
-//        Article oldArticle = articleService.getById(id);
-//        ThrowUtils.throwIf(oldArticle == null, ErrorCode.NOT_FOUND_ERROR);
-//        // 仅本人或管理员可删除
-//        if (!oldArticle.getUserId().equals(user.getId()) && !userService.isAdmin(request)) {
-//            throw new BusinessException(ErrorCode.NO_AUTH_ERROR);
-//        }
-//        // 操作数据库
-//        boolean result = articleService.removeById(id);
-//        ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR);
-//        return ResultUtils.success(true);
-//    }
-//
-//    /**
-//     * 更新文章（仅管理员可用）
-//     *
-//     * @param articleUpdateRequest
-//     * @return
-//     */
-//    @PostMapping("/update")
-//    @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
-//    public BaseResponse<Boolean> updateArticle(@RequestBody ArticleUpdateRequest articleUpdateRequest) {
-//        if (articleUpdateRequest == null || articleUpdateRequest.getId() <= 0) {
-//            throw new BusinessException(ErrorCode.PARAMS_ERROR);
-//        }
-//        // todo 在此处将实体类和 DTO 进行转换
-//        Article article = new Article();
-//        BeanUtils.copyProperties(articleUpdateRequest, article);
-//        // 数据校验
-//        articleService.validArticle(article, false);
-//        // 判断是否存在
-//        long id = articleUpdateRequest.getId();
-//        Article oldArticle = articleService.getById(id);
-//        ThrowUtils.throwIf(oldArticle == null, ErrorCode.NOT_FOUND_ERROR);
-//        // 操作数据库
-//        boolean result = articleService.updateById(article);
-//        ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR);
-//        return ResultUtils.success(true);
-//    }
-//
-//    /**
-//     * 根据 id 获取文章（封装类）
-//     *
-//     * @param id
-//     * @return
-//     */
-//    @GetMapping("/get/vo")
-//    public BaseResponse<ArticleVO> getArticleVOById(long id, HttpServletRequest request) {
-//        ThrowUtils.throwIf(id <= 0, ErrorCode.PARAMS_ERROR);
-//        // 查询数据库
-//        Article article = articleService.getById(id);
-//        ThrowUtils.throwIf(article == null, ErrorCode.NOT_FOUND_ERROR);
-//        // 获取封装类
-//        return ResultUtils.success(articleService.getArticleVO(article, request));
-//    }
-//
     /**
-     * 分页获取文章列表和 根据关键字查询
+     * 删除文章(仅管理员和本人可用)
+     *
+     * @param deleteRequest
+     * @param request
+     * @return
+     */
+    @PostMapping("/delete")
+    public BaseResponse<Boolean> deleteArticle(@RequestBody DeleteRequest deleteRequest, HttpServletRequest request) {
+        if (deleteRequest == null || deleteRequest.getId() <= 0) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        User user = userService.getLoginUser(request);
+        long id = deleteRequest.getId();
+        // 判断是否存在
+        Article oldArticle = articleService.getById(id);
+        ThrowUtils.throwIf(oldArticle == null, ErrorCode.NOT_FOUND_ERROR);
+        // 仅本人或管理员可删除
+        if (!oldArticle.getUserId().equals(user.getId()) && !userService.isAdmin(request)) {
+            throw new BusinessException(ErrorCode.NO_AUTH_ERROR);
+        }
+        // 操作数据库
+        boolean result = articleService.deleteArticle(id);
+        ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR);
+        return ResultUtils.success(true);
+    }
+
+    /**
+     * 更新文章（仅本人可用）
+     *
+     * @param articleUpdateRequest
+     * @return
+     */
+    @PostMapping("/update")
+//    @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
+    public BaseResponse<Boolean> updateArticle(@RequestBody ArticleUpdateRequest articleUpdateRequest,HttpServletRequest request) {
+        if (articleUpdateRequest == null || articleUpdateRequest.getId() <= 0) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        User user = userService.getLoginUser(request);
+        // 实体类和 DTO 进行转换
+        Article article = new Article();
+        BeanUtils.copyProperties(articleUpdateRequest, article);
+        // 数据校验
+        articleService.validArticle(article, false);
+
+        // 判断是否存在
+        long id = articleUpdateRequest.getId();
+        Article oldArticle = articleService.getById(id);
+        ThrowUtils.throwIf(oldArticle == null, ErrorCode.NOT_FOUND_ERROR);
+
+        // 仅本人或管理员可更新
+        if (!oldArticle.getUserId().equals(user.getId())) {
+            throw new BusinessException(ErrorCode.NO_AUTH_ERROR);
+        }
+        // 操作数据库
+        boolean result = articleService.updateById(article);
+        ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR);
+        return ResultUtils.success(true);
+    }
+
+    /**
+     * 查询文章详细信息
+     * 根据 id 获取文章（封装类）
+     * @param id
+     * @return
+     */
+    @GetMapping("/get/vo")
+    public BaseResponse<ArticleVO> getArticleVOById(long id, HttpServletRequest request) {
+        ThrowUtils.throwIf(id <= 0, ErrorCode.PARAMS_ERROR);
+        // 查询数据库
+        Article article = articleService.getById(id);
+        ThrowUtils.throwIf(article == null, ErrorCode.NOT_FOUND_ERROR);
+        // 获取封装类
+        return ResultUtils.success(articleService.getArticleVO(article, request));
+    }
+
+
+    /**
+     * 分页获取文章列表和 根据关键字查询 所有用户可用
      *
      * @param articleQueryRequest
      * @return
      */
     @PostMapping("/list/page")
-    public BaseResponse<Page<Article>> listArticleByPage(@RequestBody ArticleQueryRequest articleQueryRequest, HttpServletRequest request) {
-        if (articleQueryRequest == null) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR);
-        }
-        // 校验用户登录
-
+    public BaseResponse<Page<Article>> listArticleByPage(@RequestBody ArticleQueryRequest articleQueryRequest) {
         long current = articleQueryRequest.getCurrent();
         long size = articleQueryRequest.getPageSize();
         // 查询数据库
         Page<Article> articlePage = articleService.page(new Page<>(current, size),articleService.queryArticles(articleQueryRequest));
+
         return ResultUtils.success(articlePage);
     }
+
 
     /**
-     * 分页获取文章列表（仅管理员可用）
-     *
-     * @param articleQueryRequest
+     * 审核文章
+     * @param articleReviewRequest
+     * @param request
      * @return
      */
-    @PostMapping("/search/searchtext")
-    public BaseResponse<Page<Article>> searchArticleByText(@RequestBody ArticleQueryRequest articleQueryRequest, HttpServletRequest request) {
-        if (articleQueryRequest == null) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+    @PostMapping("/list/page")
+    public BaseResponse<Boolean> reviewArticle(@RequestBody ArticleReviewRequest articleReviewRequest,HttpServletRequest request) {
+        ThrowUtils.throwIf(articleReviewRequest == null, ErrorCode.PARAMS_ERROR);
+        // 鉴权
+        if (!userService.isAdmin(request)) {
+            throw new BusinessException(ErrorCode.NO_AUTH_ERROR);
         }
-        // 校验用户登录
-        long current = articleQueryRequest.getCurrent();
-        long size = articleQueryRequest.getPageSize();
-        // 查询数据库
-        Page<Article> articlePage = articleService.page(new Page<>(current, size),articleService.queryArticles(articleQueryRequest));
-        return ResultUtils.success(articlePage);
+
+        // 操作数据库
+        boolean result = articleService.reviewArticle(articleReviewRequest,request);
+        ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR);
+        return ResultUtils.success(true);
     }
+
+
 //
 //    /**
 //     * 分页获取文章列表（封装类）

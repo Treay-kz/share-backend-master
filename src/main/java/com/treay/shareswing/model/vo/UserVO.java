@@ -24,39 +24,45 @@ public class UserVO implements Serializable {
     private Long id;
 
     /**
-     * 标题
+     * 账号
      */
-    private String title;
+    private String userAccount;
 
     /**
-     * 内容
+     * 内部编号（学号）
      */
-    private String content;
+    private String codingId;
 
     /**
-     * 创建用户 id
+     * 用户昵称
      */
-    private Long userId;
+    private String userName;
 
     /**
-     * 创建时间
+     * 用户头像
      */
-    private Date createTime;
+    private String userAvatar;
 
     /**
-     * 更新时间
+     * 用户简介
      */
-    private Date updateTime;
+    private String userProfile;
 
     /**
-     * 标签列表
+     * 手机号码
      */
-    private List<String> tagList;
+    private String phone;
 
     /**
-     * 创建用户信息
+     * 邮箱
      */
-    private UserVO user;
+    private String email;
+
+    /**
+     * 用户角色：user/admin/ban
+     */
+    private String userRole;
+
 
     /**
      * 封装类转对象
@@ -70,8 +76,6 @@ public class UserVO implements Serializable {
         }
         User user = new User();
         BeanUtils.copyProperties(userVO, user);
-        List<String> tagList = userVO.getTagList();
-        user.setTags(JSONUtil.toJsonStr(tagList));
         return user;
     }
 
@@ -87,7 +91,6 @@ public class UserVO implements Serializable {
         }
         UserVO userVO = new UserVO();
         BeanUtils.copyProperties(user, userVO);
-        userVO.setTagList(JSONUtil.toList(user.getTags(), String.class));
         return userVO;
     }
 }
