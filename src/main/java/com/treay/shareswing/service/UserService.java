@@ -1,9 +1,12 @@
 package com.treay.shareswing.service;
 
 import co.elastic.clients.elasticsearch.nodes.Http;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.treay.shareswing.common.BaseResponse;
+import com.treay.shareswing.model.dto.user.UserQueryRequest;
 import com.treay.shareswing.model.dto.user.UserSendEmail;
+import com.treay.shareswing.model.dto.user.UserUpdatePasswordRequest;
 import com.treay.shareswing.model.entity.Article;
 import com.treay.shareswing.model.entity.User;
 import com.treay.shareswing.model.vo.ArticleVO;
@@ -50,6 +53,13 @@ public interface UserService extends IService<User> {
 
 
     /**
+     * 用户注销
+     *
+     * @param request
+     * @return
+     */
+    boolean userLogout(HttpServletRequest request);
+    /**
      * 获取脱敏的已登录用户信息
      *
      * @return
@@ -67,10 +77,9 @@ public interface UserService extends IService<User> {
     /**
      * 根据id查询用户 返回封装类（VO）
      * @param user
-     * @param request
      * @return
      */
-    UserVO getUserVO(User user, HttpServletRequest request);
+    UserVO getUserVO(User user);
 
     /**
      * 判断是否为管理员
@@ -79,4 +88,32 @@ public interface UserService extends IService<User> {
      */
     boolean isAdmin(HttpServletRequest request);
 
+    /**
+     * 修改密码
+     * @param userUpdatePasswordRequest
+     * @return
+     */
+    boolean updatePassword(UserUpdatePasswordRequest userUpdatePasswordRequest);
+
+    /**
+     * 根据用户账号查询用户
+     * @param userAccount
+     * @return
+     */
+    User getByUserAccount(String userAccount);
+
+    /**
+     * 获取验证码
+     * @param email
+     * @return
+     */
+    String getValideCode(String email);
+
+    /**
+     * 获取查询条件
+     *
+     * @param userQueryRequest
+     * @return
+     */
+    QueryWrapper<User> getQueryWrapper(UserQueryRequest userQueryRequest);
 }

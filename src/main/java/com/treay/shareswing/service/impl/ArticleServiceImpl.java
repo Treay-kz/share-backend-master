@@ -10,25 +10,21 @@ import com.google.gson.reflect.TypeToken;
 import com.treay.shareswing.common.ErrorCode;
 import com.treay.shareswing.constant.CommonConstant;
 import com.treay.shareswing.exception.ThrowUtils;
-import com.treay.shareswing.mapper.ArticleFavourMapper;
-import com.treay.shareswing.mapper.ArticleMapper;
-import com.treay.shareswing.mapper.ArticleThumbMapper;
+import com.treay.shareswing.mapper.*;
 import com.treay.shareswing.model.dto.admin.ArticleReviewRequest;
 import com.treay.shareswing.model.dto.article.ArticleQueryRequest;
-import com.treay.shareswing.model.entity.Article;
-import com.treay.shareswing.model.entity.ArticleFavour;
-import com.treay.shareswing.model.entity.ArticleThumb;
+import com.treay.shareswing.model.entity.*;
 import com.treay.shareswing.model.enums.ArticleStatusEnum;
 import com.treay.shareswing.model.enums.UserRoleEnum;
 import com.treay.shareswing.model.vo.ArticleVO;
 import com.treay.shareswing.model.vo.UserVO;
-import com.treay.shareswing.model.entity.User;
 import com.treay.shareswing.service.ArticleService;
 
 import com.treay.shareswing.service.UserService;
 import com.treay.shareswing.utils.SqlUtils;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -54,6 +50,12 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article>
 
     @Resource
     private ArticleFavourMapper articleFavourMapper;
+    @Resource
+    private UserMapper userMapper;
+
+    @Resource
+    private ReviewMapper reviewMapper;
+
     /**
      * 根据条件查询文章列表
      * @param articleQueryRequest
@@ -145,7 +147,6 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article>
         if (userId != null && userId > 0) {
             user = userService.getById(userId);
         }
-
         UserVO userVO = UserVO.objToVo(user);
         articleVO.setUser(userVO);
         // 2. 已登录，获取用户点赞、收藏状态
@@ -196,6 +197,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article>
     public boolean reviewArticle(ArticleReviewRequest articleReviewRequest,HttpServletRequest request) {
         // 获取参数
         Long id = articleReviewRequest.getId();
+        ThrowUtils.throwIf(id == null || id <= 0, ErrorCode.PARAMS_ERROR);
         Boolean isPass = articleReviewRequest.getIsPass();
         Article oldArticle = this.getById(id);
         // 审核通过
@@ -209,6 +211,15 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article>
         User user = userService.getLoginUser(request);
         Long userId = user.getId();
         // 向审核表中加数据
+        Review articleReview = null;
+        articleReview.setResourceId(id);
+        articleReview.setResourceType(0);
+        articleReview.setUserId(userId);
+        articleReview.setMessage(reviewMessage);
+        articleReview.setDescription(reviewDescription);
+        int insert = reviewMapper.insert(articleReview);
+        ThrowUtils.throwIf(insert <= 0, ErrorCode.SYSTEM_ERROR);
+        // 更新文章状态
         oldArticle.setArticleStatus(ArticleStatusEnum.FAIL.getValue());
         return this.updateById(oldArticle);
     }

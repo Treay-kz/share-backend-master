@@ -32,8 +32,6 @@ spring:
     timeout: 5000
 
 
-
-
   mail:
     host: smtp.qq.com
     protocol: smtp

@@ -22,35 +22,18 @@ public class UserQueryRequest extends PageRequest implements Serializable {
      */
     private Long id;
 
-    /**
-     * id
-     */
-    private Long notId;
 
     /**
      * 搜索词
      */
-    private String searchText;
-
-    /**
-     * 标题
-     */
-    private String title;
+    private String userAccount;
 
     /**
      * 内容
      */
-    private String content;
+    private String userName;
 
-    /**
-     * 标签列表
-     */
-    private List<String> tags;
 
-    /**
-     * 创建用户 id
-     */
-    private Long userId;
 
     private static final long serialVersionUID = 1L;
 }
