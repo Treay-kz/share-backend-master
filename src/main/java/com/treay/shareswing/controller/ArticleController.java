@@ -178,7 +178,7 @@ public class ArticleController {
      * @param request
      * @return
      */
-    @PostMapping("/list/page")
+    @PostMapping("/admin/review/article")
     public BaseResponse<Boolean> reviewArticle(@RequestBody ArticleReviewRequest articleReviewRequest,HttpServletRequest request) {
         ThrowUtils.throwIf(articleReviewRequest == null, ErrorCode.PARAMS_ERROR);
         // 鉴权

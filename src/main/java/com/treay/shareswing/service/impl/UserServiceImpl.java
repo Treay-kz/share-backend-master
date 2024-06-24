@@ -18,7 +18,9 @@ import com.treay.shareswing.model.enums.UserRoleEnum;
 import com.treay.shareswing.model.vo.LoginUserVO;
 import com.treay.shareswing.model.vo.UserVO;
 import com.treay.shareswing.service.UserService;
+
 import javax.mail.*;
+
 import com.treay.shareswing.utils.EmailUtils;
 import com.treay.shareswing.utils.SqlUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -44,14 +46,14 @@ import static com.treay.shareswing.constant.UserConstant.USER_LOGIN_STATE;
 import static com.treay.shareswing.utils.ValidateCodeUtils.generateValidateCode;
 
 /**
-* @author 16799
-* @description 针对表【user(用户)】的数据库操作Service实现
-* @createDate 2024-06-01 11:50:40
-*/
+ * @author 16799
+ * @description 针对表【user(用户)】的数据库操作Service实现
+ * @createDate 2024-06-01 11:50:40
+ */
 @Slf4j
 @Service
 public class UserServiceImpl extends ServiceImpl<UserMapper, User>
-    implements UserService {
+        implements UserService {
     @Resource
     private RedissonClient redissonClient;
 
@@ -109,7 +111,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     @Override
     public long userRegister(String userAccount, String userEmail, String code, String userPassword, String checkPassword, String codingId) {
         // 1. 校验
-        if (StringUtils.isAnyBlank(userAccount, userEmail, code, userPassword, checkPassword, codingId)) {
+        if (StringUtils.isAnyBlank(userAccount, userEmail, code, userPassword, checkPassword)) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "参数为空");
         }
         if (userAccount.length() < 4) {
@@ -133,12 +135,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         if (!userPassword.equals(checkPassword)) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "密码和校验密码必须相同");
         }
-        if (codingId.length() != 9 || codingId.charAt(0) != 'P') {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "学号格式错误");
+        if (StringUtils.isNotBlank(codingId)) {
+            if (codingId.length() != 9 || codingId.charAt(0) != 'P') {
+                throw new BusinessException(ErrorCode.PARAMS_ERROR, "编号格式错误");
+            }
         }
 
         // 获取缓存验证码
-
         String sendMessageCode = this.getValideCode(userEmail);
         log.info(sendMessageCode);
         if (!code.equals(sendMessageCode)) {
@@ -199,13 +202,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户账号密码不匹配");
         }
         if (!("user".equals(user.getUserRole()))) {
-            throw new BusinessException(ErrorCode.NO_AUTH_ERROR,"非学生用户或已被禁用");
+            throw new BusinessException(ErrorCode.NO_AUTH_ERROR, "非学生用户或已被禁用");
         }
         // 记录用户登录态
         request.getSession().setAttribute(USER_LOGIN_STATE, user);
         return this.getLoginUserVO(user);
     }
-    public Boolean initUser (User user){
+
+    public Boolean initUser(User user) {
         String defaultUrl = "https://img1.baidu.com/it/u=1637179393,2329776654&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=542";
         user.setUserAvatar(defaultUrl);
         user.setUserName("用户" + generateValidateCode(6).toString());
@@ -213,7 +217,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     }
 
     @Override
-    public LoginUserVO getLoginUserVO (User user){
+    public LoginUserVO getLoginUserVO(User user) {
         if (user == null) {
             return null;
         }
@@ -221,6 +225,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         BeanUtils.copyProperties(user, loginUserVO);
         return loginUserVO;
     }
+
     /**
      * 用户注销
      *
@@ -235,6 +240,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         request.getSession().removeAttribute(USER_LOGIN_STATE);
         return true;
     }
+
     /**
      * 获取用户封装
      *
@@ -242,11 +248,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
      * @return
      */
     @Override
-    public UserVO getUserVO(User user ) {
+    public UserVO getUserVO(User user) {
         // 对象转封装类
         UserVO userVO = UserVO.objToVo(user);
         return userVO;
     }
+
     @Override
     public User getLoginUser(HttpServletRequest request) {
         if (request.getSession().getAttribute(USER_LOGIN_STATE) == null) {
@@ -264,6 +271,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
 
     /**
      * 更新用户密码
+     *
      * @param userUpdatePasswordRequest
      * @return
      */
@@ -294,6 +302,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
 
     /**
      * 根据用户名获取用户
+     *
      * @param userAccount
      * @return
      */
@@ -307,6 +316,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
 
     /**
      * 获取验证码
+     *
      * @param email
      * @return
      */

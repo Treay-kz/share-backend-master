@@ -22,6 +22,11 @@ public class UserAddRequest implements Serializable {
     private String userAccount;
 
     /**
+     * 账号
+     */
+    private String userProfile;
+
+    /**
      * 用户头像
      */
     private String userAvatar;
@@ -30,6 +35,11 @@ public class UserAddRequest implements Serializable {
      * 用户角色: user, admin
      */
     private String userRole;
+
+    /**
+     * 用户角色: user, admin
+     */
+    private String codingId;
 
     private static final long serialVersionUID = 1L;
 

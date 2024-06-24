@@ -17,7 +17,9 @@ import com.treay.shareswing.model.entity.User;
 import com.treay.shareswing.model.vo.LoginUserVO;
 import com.treay.shareswing.model.vo.UserVO;
 import com.treay.shareswing.service.UserService;
+
 import static com.sun.javafx.font.FontResource.SALT;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -30,9 +32,8 @@ import javax.servlet.http.HttpServletRequest;
 
 /**
  * 用户接口
- *
+ * <p>
  * treay
- * 
  */
 @RestController
 @RequestMapping("/user")
@@ -42,13 +43,28 @@ public class UserController {
     @Resource
     private UserService userService;
 
+
+    /**
+     * 获取登录用户信息（GET）
+     *
+     * @param request
+     * @return
+     */
+    @GetMapping("/getLoginUser")
+    public BaseResponse<User> getLoginUser(HttpServletRequest request) {
+        User user = userService.getLoginUser(request);
+        ThrowUtils.throwIf(user == null, ErrorCode.NOT_FOUND_ERROR);
+        return ResultUtils.success(user);
+    }
+
     /**
      * 用户注册
+     *
      * @param userRegisterRequest
      * @return
      */
     @PostMapping("/register")
-    public BaseResponse<Long> userRegister(@RequestBody UserRegisterRequest userRegisterRequest , HttpServletRequest request) {
+    public BaseResponse<Long> userRegister(@RequestBody UserRegisterRequest userRegisterRequest, HttpServletRequest request) {
         ThrowUtils.throwIf(userRegisterRequest == null, ErrorCode.PARAMS_ERROR);
         String userAccount = userRegisterRequest.getUserAccount();
         String userPassword = userRegisterRequest.getUserPassword();
@@ -56,15 +72,16 @@ public class UserController {
         String code = userRegisterRequest.getCode();
         String codingId = userRegisterRequest.getCodingId();
         String checkPassword = userRegisterRequest.getCheckPassword();
-        if (StringUtils.isAnyBlank(userAccount, userPassword, checkPassword,userEmail,code)) {
+        if (StringUtils.isAnyBlank(userAccount, userPassword, checkPassword, userEmail, code)) {
             return null;
         }
-        long result = userService.userRegister(userAccount, userEmail,code,userPassword, checkPassword,codingId);
+        long result = userService.userRegister(userAccount, userEmail, code, userPassword, checkPassword, codingId);
         return ResultUtils.success(result);
     }
 
     /**
      * 用户登录
+     *
      * @param userLoginRequest
      * @return
      */
@@ -76,9 +93,10 @@ public class UserController {
         if (StringUtils.isAnyBlank(userAccount, userPassword)) {
             return ResultUtils.error(ErrorCode.PARAMS_ERROR);
         }
-        LoginUserVO loginUserVO = userService.userLogin(userAccount, userPassword,request);
+        LoginUserVO loginUserVO = userService.userLogin(userAccount, userPassword, request);
         return ResultUtils.success(loginUserVO);
     }
+
     /**
      * 修改个人信息（仅个人可用）
      *
@@ -87,8 +105,7 @@ public class UserController {
      * @return
      */
     @PostMapping("/update")
-    public BaseResponse<Boolean> userUpdate(@RequestBody UserUpdateRequest userUpdateRequest,
-                                            HttpServletRequest request) {
+    public BaseResponse<Boolean> userUpdate(@RequestBody UserUpdateRequest userUpdateRequest, HttpServletRequest request) {
         ThrowUtils.throwIf(userUpdateRequest == null, ErrorCode.PARAMS_ERROR);
         User loginUser = userService.getLoginUser(request);
         User user = new User();
@@ -107,8 +124,7 @@ public class UserController {
      * @return
      */
     @PostMapping("/updatePassword")
-    public BaseResponse<Boolean> userUpdatePassword(@RequestBody UserUpdatePasswordRequest userUpdatePasswordRequest,
-                                            HttpServletRequest request) {
+    public BaseResponse<Boolean> userUpdatePassword(@RequestBody UserUpdatePasswordRequest userUpdatePasswordRequest, HttpServletRequest request) {
         ThrowUtils.throwIf(userUpdatePasswordRequest == null, ErrorCode.PARAMS_ERROR);
         User loginUser = userService.getLoginUser(request);
         // 判断是否是本人
@@ -119,8 +135,10 @@ public class UserController {
         ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR);
         return ResultUtils.success(true);
     }
+
     /**
      * 发送邮箱验证码
+     *
      * @param userSendEmail
      * @return
      */
@@ -184,16 +202,14 @@ public class UserController {
      */
     @PostMapping("/admin/page")
 //    @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
-    public BaseResponse<Page<User>> listUserByPage(@RequestBody UserQueryRequest userQueryRequest,
-                                                   HttpServletRequest request) {
+    public BaseResponse<Page<User>> listUserByPage(@RequestBody UserQueryRequest userQueryRequest, HttpServletRequest request) {
         ThrowUtils.throwIf(userQueryRequest == null, ErrorCode.PARAMS_ERROR);
         if (!userService.isAdmin(request)) {
             throw new BusinessException(ErrorCode.NO_AUTH_ERROR);
         }
         long current = userQueryRequest.getCurrent();
         long size = userQueryRequest.getPageSize();
-        Page<User> userPage = userService.page(new Page<>(current, size),
-                userService.getQueryWrapper(userQueryRequest));
+        Page<User> userPage = userService.page(new Page<>(current, size), userService.getQueryWrapper(userQueryRequest));
         return ResultUtils.success(userPage);
     }
 
@@ -249,8 +265,7 @@ public class UserController {
      */
     @PostMapping("/admin/update")
     @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
-    public BaseResponse<Boolean> updateUser(@RequestBody UserUpdateRequest userUpdateRequest,
-                                            HttpServletRequest request) {
+    public BaseResponse<Boolean> updateUser(@RequestBody UserUpdateRequest userUpdateRequest, HttpServletRequest request) {
         ThrowUtils.throwIf(userUpdateRequest == null || userUpdateRequest.getId() == null, ErrorCode.PARAMS_ERROR);
         if (!userService.isAdmin(request)) {
             throw new BusinessException(ErrorCode.NO_AUTH_ERROR);
@@ -264,8 +279,7 @@ public class UserController {
 
     @PostMapping("/admin/ban")
 //    @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
-    public BaseResponse<Boolean> banUser(@RequestBody UserBanRequest userBanRequest,
-                                            HttpServletRequest request) {
+    public BaseResponse<Boolean> banUser(@RequestBody UserBanRequest userBanRequest, HttpServletRequest request) {
         ThrowUtils.throwIf(userBanRequest == null || userBanRequest.getId() == null, ErrorCode.PARAMS_ERROR);
         if (!userService.isAdmin(request)) {
             throw new BusinessException(ErrorCode.NO_AUTH_ERROR);
