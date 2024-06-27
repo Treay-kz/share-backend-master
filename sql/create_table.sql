@@ -33,9 +33,10 @@ create table if not exists file
     id              bigint auto_increment comment '主键'
         primary key,
     userId          bigint                             null comment '上传人id',
+    md5             varchar(255)                       null comment 'md5标识',
     fileUrl         varchar(256)                       null comment '文件路径',
     fileType        varchar(32)                        null comment '文件类型（word、ppt、pdf、txt）',
-    fileSize    	int 							   null comment '文件大小',
+    fileSize    	bigint 							   null comment '文件大小',
     fileStatus		int                            not null comment '文件状态:0-待审核 1-审核未通过 2-已发布',
     createTime      datetime default CURRENT_TIMESTAMP null comment '创建时间',
     updateTime      datetime default CURRENT_TIMESTAMP null on update CURRENT_TIMESTAMP comment '修改时间',
@@ -60,7 +61,23 @@ create table if not exists article
 
 ) comment '文章' collate = utf8mb4_unicode_ci;
 
--- 帖子表
+-- 审核表
+create table if not exists share_db.review
+(
+    id           bigint auto_increment comment '主键'
+        primary key,
+    resourceId   bigint                             null comment '资源id ',
+    resourceType tinyint                            null comment '资源类型 0-文章，1-帖子',
+    userId       bigint                             null comment '审核人id',
+    message      varchar(256)                       null comment '审核意见',
+    description  varchar(1024)                      null comment '审核描述',
+    createTime   datetime default CURRENT_TIMESTAMP null comment '创建时间',
+    updateTime   datetime default CURRENT_TIMESTAMP null on update CURRENT_TIMESTAMP comment '更新时间',
+    isDelete     tinyint  default 0                 null comment '是否删除'
+)
+    comment '审核表' collate = utf8mb4_unicode_ci;
+
+-- 标签表
 create table if not exists tag
 (
     id         bigint auto_increment comment '主键'
@@ -75,7 +92,7 @@ create table if not exists tag
         unique (tagName)
 )  comment '标签表' collate = utf8mb4_unicode_ci;
 
--- 帖子点赞表（硬删除）
+-- 文章点赞表（硬删除）
 create table if not exists article_thumb
 (
     id         bigint auto_increment comment 'id' primary key,
@@ -86,7 +103,7 @@ create table if not exists article_thumb
 ) comment '文章点赞';
 
 
--- 帖子收藏表（硬删除）
+-- 文章收藏表（硬删除）
 create table if not exists article_favour
 (
     id         bigint auto_increment comment 'id' primary key,

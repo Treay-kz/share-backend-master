@@ -9,8 +9,12 @@ package com.treay.shareswing.constant;
 public interface FileConstant {
 
     /**
-     * COS 访问地址
-     * todo 需替换配置
+     * 本地文件存储地址
+     *
      */
-    String COS_HOST = "https://treay.icu";
+    String DEV_FILEPATH = "D:\\shareswing";
+    /**
+     * 线上文件存储地址
+     */
+    String PROD_FILEPATH = "/www/wwwroot/shareswing-backend/shareswing/";
 }

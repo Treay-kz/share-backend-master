@@ -1,23 +1,31 @@
 package com.treay.shareswing.model.entity;
 
-import com.baomidou.mybatisplus.annotation.*;
-import lombok.Data;
-
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
 import java.util.Date;
+import lombok.Data;
 
 /**
  * 文件表
- * @TableName notice
+ * @TableName file
  */
-@TableName(value ="resource")
+@TableName(value ="file")
 @Data
-public class Resource implements Serializable {
+public class File implements Serializable {
     /**
      * 主键
      */
     @TableId(type = IdType.AUTO)
     private Long id;
+
+
+    /**
+     * 文件名
+     */
+    private String fileName;
 
     /**
      * 上传人id
@@ -40,6 +48,11 @@ public class Resource implements Serializable {
     private Long fileSize;
 
     /**
+     * 文件路径
+     */
+    private String md5;
+
+    /**
      * 文件状态:0-待审核 1-审核未通过 2-已发布
      */
     private Integer fileStatus;
@@ -57,7 +70,6 @@ public class Resource implements Serializable {
     /**
      * 是否删除
      */
-    @TableLogic
     private Integer isDelete;
 
     @TableField(exist = false)

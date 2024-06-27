@@ -13,7 +13,6 @@ public interface    UserConstant {
      */
     String USER_LOGIN_STATE = "user_login";
 
-    //  region 权限
 
     /**
      * 默认角色
@@ -30,5 +29,4 @@ public interface    UserConstant {
      */
     String BAN_ROLE = "ban";
 
-    // endregion
 }

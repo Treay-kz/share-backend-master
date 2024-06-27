@@ -1,36 +1,30 @@
 package com.treay.shareswing.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.treay.shareswing.common.ErrorCode;
-import com.treay.shareswing.constant.CommonConstant;
 import com.treay.shareswing.exception.ThrowUtils;
 import com.treay.shareswing.mapper.*;
 import com.treay.shareswing.model.dto.admin.ArticleReviewRequest;
 import com.treay.shareswing.model.dto.article.ArticleQueryRequest;
 import com.treay.shareswing.model.entity.*;
-import com.treay.shareswing.model.enums.ArticleStatusEnum;
-import com.treay.shareswing.model.enums.UserRoleEnum;
+import com.treay.shareswing.model.enums.ReviewStatusEnum;
 import com.treay.shareswing.model.vo.ArticleVO;
 import com.treay.shareswing.model.vo.UserVO;
 import com.treay.shareswing.service.ArticleService;
 
+import com.treay.shareswing.service.ReviewService;
 import com.treay.shareswing.service.UserService;
-import com.treay.shareswing.utils.SqlUtils;
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import java.beans.Transient;
 import java.util.List;
 
 
@@ -54,7 +48,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article>
     private UserMapper userMapper;
 
     @Resource
-    private ReviewMapper reviewMapper;
+    private ReviewService reviewService;
 
     /**
      * 根据条件查询文章列表
@@ -202,7 +196,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article>
         Article oldArticle = this.getById(id);
         // 审核通过
         if (isPass) {
-            oldArticle.setArticleStatus(ArticleStatusEnum.SUCCESS.getValue());
+            oldArticle.setArticleStatus(ReviewStatusEnum.SUCCESS.getValue());
             return this.updateById(oldArticle);
         }
         // 审核未通过
@@ -217,10 +211,10 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article>
         articleReview.setUserId(userId);
         articleReview.setMessage(reviewMessage);
         articleReview.setDescription(reviewDescription);
-        int insert = reviewMapper.insert(articleReview);
-        ThrowUtils.throwIf(insert <= 0, ErrorCode.SYSTEM_ERROR);
+        boolean result = reviewService.save(articleReview);
+        ThrowUtils.throwIf(!result, ErrorCode.SYSTEM_ERROR);
         // 更新文章状态
-        oldArticle.setArticleStatus(ArticleStatusEnum.FAIL.getValue());
+        oldArticle.setArticleStatus(ReviewStatusEnum.FAIL.getValue());
         return this.updateById(oldArticle);
     }
 }

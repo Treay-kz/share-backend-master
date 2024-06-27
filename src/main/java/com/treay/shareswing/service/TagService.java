@@ -10,10 +10,21 @@ import com.treay.shareswing.model.entity.Tag;
 */
 public interface TagService extends IService<Tag> {
 
+    /**
+     * 添加标签
+     * @param tag
+     * @return
+     */
     String addTag(Tag tag);
-    Tag searchTag(Integer id);
 
-    String deleteTag(Integer tagid);
 
-    Integer changeTag(Tag tag);
+
+    /**
+     * 修改标签
+     * @param tag
+     * @return
+     */
+    Boolean changeTag(Tag tag);
+
+    Boolean deleteTag(Long id);
 }

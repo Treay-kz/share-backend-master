@@ -30,9 +30,9 @@ public class CodeGenerator {
     public static void main(String[] args) throws TemplateException, IOException {
         // 指定生成参数
         String packageName = "com.treay.shareswing";
-        String dataName = "文章收藏";
-        String dataKey = "articleThumb";
-        String upperDataKey = "ArticleThumb";
+        String dataName = "标签";
+        String dataKey = "tag";
+        String upperDataKey = "Tag";
 
         // 封装生成参数
         Map<String, Object> dataModel = new HashMap<>();

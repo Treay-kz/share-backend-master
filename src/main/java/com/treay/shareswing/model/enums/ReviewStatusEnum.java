@@ -7,12 +7,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * 用户角色枚举
+ * 审核状态枚举
  *
  * treay
  * 
  */
-public enum ArticleStatusEnum {
+public enum ReviewStatusEnum {
 
     WAITING("审核中", 0),
     FAIL("审核未通过", 1),
@@ -22,7 +22,7 @@ public enum ArticleStatusEnum {
 
     private final Integer value;
 
-    ArticleStatusEnum(String text, Integer value) {
+    ReviewStatusEnum(String text, Integer value) {
         this.text = text;
         this.value = value;
     }
@@ -42,11 +42,11 @@ public enum ArticleStatusEnum {
      * @param value
      * @return
      */
-    public static ArticleStatusEnum getEnumByValue(Integer value) {
+    public static ReviewStatusEnum getEnumByValue(Integer value) {
         if (ObjectUtils.isEmpty(value)) {
             return null;
         }
-        for (ArticleStatusEnum anEnum : ArticleStatusEnum.values()) {
+        for (ReviewStatusEnum anEnum : ReviewStatusEnum.values()) {
             if (anEnum.value.equals(value)) {
                 return anEnum;
             }
