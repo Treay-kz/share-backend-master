@@ -48,7 +48,7 @@ public interface UserService extends IService<User> {
      * @param request
      * @return
      */
-    LoginUserVO userLogin(String userAccount, String userPassword, HttpServletRequest request);
+    UserVO userLogin(String userAccount, String userPassword, HttpServletRequest request);
 
 
 

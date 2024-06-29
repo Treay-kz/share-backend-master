@@ -1,23 +1,30 @@
 package com.treay.shareswing.service.impl;
 
+import cn.hutool.core.collection.CollUtil;
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.treay.shareswing.common.ErrorCode;
+import com.treay.shareswing.constant.CommonConstant;
 import com.treay.shareswing.exception.BusinessException;
 import com.treay.shareswing.exception.ThrowUtils;
 import com.treay.shareswing.mapper.TagMapper;
 import com.treay.shareswing.mapper.UserMapper;
+import com.treay.shareswing.model.dto.tag.TagQueryRequest;
 import com.treay.shareswing.model.entity.Tag;
 import com.treay.shareswing.model.entity.User;
 import com.treay.shareswing.service.TagService;
 
+import com.treay.shareswing.utils.SqlUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.formula.functions.T;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * @author 16799
@@ -44,7 +51,7 @@ public class TagServiceImpl extends ServiceImpl<TagMapper, Tag>
         if (count > 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "标签重复");
         }
-        if (isp.equals(1)) {
+        if (isp.equals(0)) {
             // 检查父标签是否存在
             ThrowUtils.throwIf(pid == null || pid.equals(0), ErrorCode.PARAMS_ERROR, "父标签不存在");
             QueryWrapper<Tag> queryWrapperpid = new QueryWrapper<>();
@@ -53,7 +60,6 @@ public class TagServiceImpl extends ServiceImpl<TagMapper, Tag>
             if (countpid < 0) {
                 throw new BusinessException(ErrorCode.PARAMS_ERROR, "父标签不存在");
             }
-
         }
 
         Tag pretag = new Tag();
@@ -85,7 +91,8 @@ public class TagServiceImpl extends ServiceImpl<TagMapper, Tag>
         }
 
         // 检查父标签是否存在
-        if (pid != 0) {
+        if (isp.equals(0)) {
+            ThrowUtils.throwIf(pid<0||pid.equals(0), ErrorCode.PARAMS_ERROR, "父标签不存在");
             QueryWrapper<Tag> queryWrapperPid = new QueryWrapper<>();
             queryWrapperPid.eq("id", pid);
             long countPid = tagMapper.selectCount(queryWrapperPid);
@@ -126,6 +133,37 @@ public class TagServiceImpl extends ServiceImpl<TagMapper, Tag>
             throw new BusinessException(ErrorCode.OPERATION_ERROR, "删除失败");
         }
         return true;
+    }
+
+    /**
+     * 获取查询条件
+     *
+     * @param tagQueryRequest
+     * @return
+     */
+    @Override
+    public QueryWrapper<Tag> getQueryWrapper(TagQueryRequest tagQueryRequest) {
+        QueryWrapper<Tag> queryWrapper = new QueryWrapper<>();
+        if (tagQueryRequest == null) {
+            return queryWrapper;
+        }
+        Long id = tagQueryRequest.getId();
+        String tagName = tagQueryRequest.getTagName();
+        Integer isParent = tagQueryRequest.getIsParent();
+        Long parentId = tagQueryRequest.getParentId();
+
+        String sortField = tagQueryRequest.getSortField();
+        String sortOrder = tagQueryRequest.getSortOrder();
+        // 精确查询
+        queryWrapper.ne(ObjectUtils.isNotEmpty(id), "id", id);
+        queryWrapper.like(ObjectUtils.isNotEmpty(tagName), "tagName", tagName);
+        queryWrapper.eq(ObjectUtils.isNotEmpty(isParent), "isParent", isParent);
+        queryWrapper.eq(ObjectUtils.isNotEmpty(parentId), "parentId", parentId);
+        // 排序规则
+        queryWrapper.orderBy(SqlUtils.validSortField(sortField),
+                sortOrder.equals(CommonConstant.SORT_ORDER_ASC),
+                sortField);
+        return queryWrapper;
     }
 
 }

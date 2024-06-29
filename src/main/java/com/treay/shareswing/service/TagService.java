@@ -1,6 +1,8 @@
 package com.treay.shareswing.service;
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.treay.shareswing.model.dto.tag.TagQueryRequest;
 import com.treay.shareswing.model.entity.Tag;
 
 /**
@@ -18,7 +20,6 @@ public interface TagService extends IService<Tag> {
     String addTag(Tag tag);
 
 
-
     /**
      * 修改标签
      * @param tag
@@ -26,5 +27,17 @@ public interface TagService extends IService<Tag> {
      */
     Boolean changeTag(Tag tag);
 
+    /**
+     * 删除标签
+     * @param id
+     * @return
+     */
     Boolean deleteTag(Long id);
+
+    /**
+     * 获取标签列表
+     * @param tagQueryRequest
+     * @return
+     */
+    Wrapper<Tag> getQueryWrapper(TagQueryRequest tagQueryRequest);
 }

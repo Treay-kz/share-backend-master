@@ -13,7 +13,7 @@ import java.util.Date;
 public class ArticleReviewRequest implements Serializable {
 
     /**
-     * 文章 id
+     *  id
      */
     private Long id;
 
@@ -22,12 +22,12 @@ public class ArticleReviewRequest implements Serializable {
      */
     private Boolean isPass;
     /**
-     * 文章或资源id
+     * 未通过原因
      */
     private String reviewMessage ;
 
     /**
-     * 审核人 id
+     * 未通过原因描述
      */
     private String reviewDescription;
 

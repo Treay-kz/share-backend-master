@@ -63,16 +63,22 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
         if (fileQueryRequest == null) {
             return queryWrapper;
         }
-        // todo 从对象中取值
         Long id = fileQueryRequest.getId();
-
+        String fileName = fileQueryRequest.getFileName();
+        String fileType = fileQueryRequest.getFileType();
+        String fileUrl = fileQueryRequest.getFileUrl();
+        Integer fileStatus = fileQueryRequest.getFileStatus();
         String sortField = fileQueryRequest.getSortField();
         String sortOrder = fileQueryRequest.getSortOrder();
         Long userId = fileQueryRequest.getUserId();
 
         // 精确查询
         queryWrapper.eq(ObjectUtils.isNotEmpty(id), "id", id);
+        queryWrapper.like(StringUtils.isNotBlank(fileName), "fileName", fileName);
         queryWrapper.eq(ObjectUtils.isNotEmpty(userId), "userId", userId);
+        queryWrapper.eq(ObjectUtils.isNotEmpty(fileStatus), "fileStatus", fileStatus);
+        queryWrapper.eq(ObjectUtils.isNotEmpty(fileType), "fileType", fileType);
+        queryWrapper.eq(ObjectUtils.isNotEmpty(fileUrl), "fileUrl", fileUrl);
         // 排序规则
         queryWrapper.orderBy(SqlUtils.validSortField(sortField),
                 sortOrder.equals(CommonConstant.SORT_ORDER_ASC),

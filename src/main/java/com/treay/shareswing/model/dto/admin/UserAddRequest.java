@@ -22,7 +22,7 @@ public class UserAddRequest implements Serializable {
     private String userAccount;
 
     /**
-     * 账号
+     * 昵称
      */
     private String userProfile;
 
@@ -37,7 +37,7 @@ public class UserAddRequest implements Serializable {
     private String userRole;
 
     /**
-     * 用户角色: user, admin
+     *
      */
     private String codingId;
 

@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.treay.shareswing.model.dto.admin.ArticleReviewRequest;
 import com.treay.shareswing.model.dto.file.FileQueryRequest;
 import com.treay.shareswing.model.entity.File;
+import com.treay.shareswing.model.entity.Tag;
 import com.treay.shareswing.model.vo.FileVO;
 
 import javax.servlet.http.HttpServletRequest;
@@ -53,4 +54,5 @@ public interface FileService extends IService<File> {
      * @return
      */
     boolean reviewFile(ArticleReviewRequest fileReviewRequest, HttpServletRequest request);
+
 }

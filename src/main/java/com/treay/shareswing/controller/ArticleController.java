@@ -144,8 +144,8 @@ public class ArticleController {
      * @param id
      * @return
      */
-    @GetMapping("/get/vo")
-    public BaseResponse<ArticleVO> getArticleVOById(long id, HttpServletRequest request) {
+    @GetMapping("/get/vo/{id}")
+    public BaseResponse<ArticleVO> getArticleVOById(@PathVariable  Long id, HttpServletRequest request) {
         ThrowUtils.throwIf(id <= 0, ErrorCode.PARAMS_ERROR);
         // 查询数据库
         Article article = articleService.getById(id);
@@ -193,84 +193,54 @@ public class ArticleController {
     }
 
 
-//
-//    /**
-//     * 分页获取文章列表（封装类）
-//     *
-//     * @param articleQueryRequest
-//     * @param request
-//     * @return
-//     */
-//    @PostMapping("/list/page/vo")
-//    public BaseResponse<Page<ArticleVO>> listArticleVOByPage(@RequestBody ArticleQueryRequest articleQueryRequest,
-//                                                               HttpServletRequest request) {
-//        long current = articleQueryRequest.getCurrent();
-//        long size = articleQueryRequest.getPageSize();
-//        // 限制爬虫
-//        ThrowUtils.throwIf(size > 20, ErrorCode.PARAMS_ERROR);
-//        // 查询数据库
-//        Page<Article> articlePage = articleService.page(new Page<>(current, size),
-//                articleService.getQueryWrapper(articleQueryRequest));
-//        // 获取封装类
-//        return ResultUtils.success(articleService.getArticleVOPage(articlePage, request));
-//    }
-//
-//    /**
-//     * 分页获取当前登录用户创建的文章列表
-//     *
-//     * @param articleQueryRequest
-//     * @param request
-//     * @return
-//     */
-//    @PostMapping("/my/list/page/vo")
-//    public BaseResponse<Page<ArticleVO>> listMyArticleVOByPage(@RequestBody ArticleQueryRequest articleQueryRequest,
-//                                                                 HttpServletRequest request) {
-//        ThrowUtils.throwIf(articleQueryRequest == null, ErrorCode.PARAMS_ERROR);
-//        // 补充查询条件，只查询当前登录用户的数据
-//        User loginUser = userService.getLoginUser(request);
-//        articleQueryRequest.setUserId(loginUser.getId());
-//        long current = articleQueryRequest.getCurrent();
-//        long size = articleQueryRequest.getPageSize();
-//        // 限制爬虫
-//        ThrowUtils.throwIf(size > 20, ErrorCode.PARAMS_ERROR);
-//        // 查询数据库
-//        Page<Article> articlePage = articleService.page(new Page<>(current, size),
-//                articleService.getQueryWrapper(articleQueryRequest));
-//        // 获取封装类
-//        return ResultUtils.success(articleService.getArticleVOPage(articlePage, request));
-//    }
-//
-//    /**
-//     * 编辑文章（给用户使用）
-//     *
-//     * @param articleEditRequest
-//     * @param request
-//     * @return
-//     */
-//    @PostMapping("/edit")
-//    public BaseResponse<Boolean> editArticle(@RequestBody ArticleEditRequest articleEditRequest, HttpServletRequest request) {
-//        if (articleEditRequest == null || articleEditRequest.getId() <= 0) {
-//            throw new BusinessException(ErrorCode.PARAMS_ERROR);
-//        }
-//        // todo 在此处将实体类和 DTO 进行转换
-//        Article article = new Article();
-//        BeanUtils.copyProperties(articleEditRequest, article);
-//        // 数据校验
-//        articleService.validArticle(article, false);
-//        User loginUser = userService.getLoginUser(request);
-//        // 判断是否存在
-//        long id = articleEditRequest.getId();
-//        Article oldArticle = articleService.getById(id);
-//        ThrowUtils.throwIf(oldArticle == null, ErrorCode.NOT_FOUND_ERROR);
-//        // 仅本人或管理员可编辑
-//        if (!oldArticle.getUserId().equals(loginUser.getId()) && !userService.isAdmin(loginUser)) {
-//            throw new BusinessException(ErrorCode.NO_AUTH_ERROR);
-//        }
-//        // 操作数据库
-//        boolean result = articleService.updateById(article);
-//        ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR);
-//        return ResultUtils.success(true);
-//    }
+
+    /**
+     * 分页获取文章列表（封装类）
+     *
+     * @param articleQueryRequest
+     * @param request
+     * @return
+     */
+    @PostMapping("/list/page/vo")
+    public BaseResponse<Page<ArticleVO>> listArticleVOByPage(@RequestBody ArticleQueryRequest articleQueryRequest,
+                                                               HttpServletRequest request) {
+        long current = articleQueryRequest.getCurrent();
+        long size = articleQueryRequest.getPageSize();
+        // 限制爬虫
+        ThrowUtils.throwIf(size > 20, ErrorCode.PARAMS_ERROR);
+        // 查询数据库
+        Page<Article> articlePage = articleService.page(new Page<>(current, size),
+                articleService.getQueryWrapper(articleQueryRequest));
+        // 获取封装类
+        return ResultUtils.success(articleService.getArticleVOPage(articlePage, request));
+    }
+
+    /**
+     * 分页获取当前登录用户创建的文章列表
+     *
+     * @param articleQueryRequest
+     * @param request
+     * @return
+     */
+    @PostMapping("/my/list/page/vo")
+    public BaseResponse<Page<ArticleVO>> listMyArticleVOByPage(@RequestBody ArticleQueryRequest articleQueryRequest,
+                                                                 HttpServletRequest request) {
+        ThrowUtils.throwIf(articleQueryRequest == null, ErrorCode.PARAMS_ERROR);
+        // 补充查询条件，只查询当前登录用户的数据
+        User loginUser = userService.getLoginUser(request);
+        articleQueryRequest.setUserId(loginUser.getId());
+        long current = articleQueryRequest.getCurrent();
+        long size = articleQueryRequest.getPageSize();
+        // 限制爬虫
+        ThrowUtils.throwIf(size > 20, ErrorCode.PARAMS_ERROR);
+        // 查询数据库
+        Page<Article> articlePage = articleService.page(new Page<>(current, size),
+                articleService.getQueryWrapper(articleQueryRequest));
+        // 获取封装类
+        return ResultUtils.success(articleService.getArticleVOPage(articlePage, request));
+    }
+
+
 
 
 }

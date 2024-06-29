@@ -3,18 +3,23 @@ package com.treay.shareswing.controller;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.crypto.SecureUtil;
+import co.elastic.clients.elasticsearch.sql.QueryRequest;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.treay.shareswing.annotation.AuthCheck;
 import com.treay.shareswing.common.BaseResponse;
 import com.treay.shareswing.common.DeleteRequest;
 import com.treay.shareswing.common.ErrorCode;
 import com.treay.shareswing.common.ResultUtils;
+import com.treay.shareswing.constant.UserConstant;
 import com.treay.shareswing.exception.BusinessException;
 import com.treay.shareswing.exception.ThrowUtils;
 import com.treay.shareswing.model.dto.admin.ArticleReviewRequest;
 import com.treay.shareswing.model.dto.file.FileQueryRequest;
+import com.treay.shareswing.model.dto.tag.TagQueryRequest;
 import com.treay.shareswing.model.entity.File;
+import com.treay.shareswing.model.entity.Tag;
 import com.treay.shareswing.model.entity.User;
 import com.treay.shareswing.model.vo.FileVO;
 import com.treay.shareswing.service.FileService;
@@ -245,7 +250,7 @@ public class FileController {
      * @return
      */
     @PostMapping("/admin/review/file")
-    public BaseResponse<Boolean> reviewArticle(@RequestBody ArticleReviewRequest fileReviewRequest, HttpServletRequest request) {
+    public BaseResponse<Boolean> reviewFile(@RequestBody ArticleReviewRequest fileReviewRequest, HttpServletRequest request) {
         ThrowUtils.throwIf(fileReviewRequest == null, ErrorCode.PARAMS_ERROR);
         // 鉴权
         if (!userService.isAdmin(request)) {
@@ -258,5 +263,20 @@ public class FileController {
         return ResultUtils.success(true);
     }
 
-
+    /**
+     * 分页获取文件列表（仅管理员可用）
+     *
+     * @param fileQueryRequest
+     * @return
+     */
+    @PostMapping("/list/page")
+    @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
+    public BaseResponse<Page<File>> listFileByPage(@RequestBody FileQueryRequest fileQueryRequest) {
+        long current = fileQueryRequest.getCurrent();
+        long size = fileQueryRequest.getPageSize();
+        // 查询数据库
+        Page<File> tagPage = fileService.page(new Page<>(current, size),
+                fileService.getQueryWrapper(fileQueryRequest));
+        return ResultUtils.success(tagPage);
+    }
 }

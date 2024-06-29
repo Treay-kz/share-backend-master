@@ -2,6 +2,7 @@ package com.treay.shareswing.service;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.treay.shareswing.model.dto.admin.ArticleReviewRequest;
 import com.treay.shareswing.model.dto.article.ArticleQueryRequest;
@@ -20,7 +21,7 @@ import java.util.List;
 public interface ArticleService extends IService<Article> {
 
     /**
-     * 条件查询文章
+     * 条件查询文章（管理员）
      * @param articleQueryRequest
      * @return
      */
@@ -55,4 +56,19 @@ public interface ArticleService extends IService<Article> {
      */
     boolean reviewArticle(ArticleReviewRequest articleReviewRequest,HttpServletRequest request);
 
+
+    /**
+     * 获取文章列表(用户)
+     * @param articleQueryRequest
+     * @return
+     */
+    QueryWrapper<Article> getQueryWrapper(ArticleQueryRequest articleQueryRequest);
+
+    /**
+     *
+     * @param articlePage
+     * @param request
+     * @return
+     */
+    Page<ArticleVO> getArticleVOPage(Page<Article> articlePage, HttpServletRequest request);
 }
